@@ -150,5 +150,5 @@ docker scout quickview javs199/backend-adopciones:1.0.0
 - Se implementó una base de datos ficticia en memoria (arrays de objetos en `src/data/`), junto con una utilidad de reinicio `resetFakeData()`, lo cual garantiza un ambiente aislado de pruebas E2E y previene la falsificación de positivos por acumulación de estado de memoria.
 
 ## 18. Autor
-- **Alumno:** Javs199
-- **Curso:** Full Stack Web Development - Backend III (Coder House)
+- **Alumno:** Jesus Vargas
+- **Curso:** 77315 – Programación Backend (III): Testing y Escalabilidad Flex
