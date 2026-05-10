@@ -1,51 +1,154 @@
 # Backend Adopciones
 
-API REST minimalista para gestionar adopciones de mascotas.
+## 1. Descripción general
+API REST minimalista diseñada para gestionar el ciclo de adopciones de mascotas. El foco técnico principal de este proyecto es la construcción de una arquitectura sólida para el router `adoption.router.js`, su validación exhaustiva mediante pruebas funcionales, su documentación interactiva y su posterior contenerización para despliegue universal.
 
-## Propósito del Proyecto
-Este proyecto provee la base funcional de una API REST aplicando una arquitectura limpia en capas (`Routes`, `Controllers`, `Services`, `Repositories`). Está preparado para ser extendido en futuras fases con tests (unitarios e integrales), conexión real a base de datos, y despliegues en contenedores (Docker). Actualmente utiliza persistencia en memoria para facilitar su comprensión, evaluación y desarrollo inicial.
+## 2. Objetivo académico
+Este proyecto forma parte de la entrega final del curso Backend III. Su objetivo no es construir una aplicación monolítica repleta de integraciones y base de datos, sino demostrar el dominio de conceptos avanzados de backend como:
+- Separación de responsabilidades mediante arquitectura por capas.
+- Pruebas funcionales rigurosas con alta cobertura.
+- Documentación automatizada de APIs.
+- Prácticas modernas de despliegue mediante Docker y publicación en DockerHub.
 
-## Entidades Principales
-- **Users**: Representa a los adoptantes en el sistema.
-- **Pets**: Representa a las mascotas disponibles o adoptadas en el sistema.
-- **Adoptions**: Registra el vínculo y el momento exacto en el que un usuario (User) adoptó a una mascota (Pet).
+## 3. Stack utilizado
+- **Entorno de ejecución:** Node.js
+- **Framework web:** Express
+- **Pruebas y Cobertura:** Jest, Supertest
+- **Documentación API:** Swagger (swagger-jsdoc, swagger-ui-express)
+- **Contenerización:** Docker
+- **Distribución en la nube:** DockerHub
+- **Seguridad:** Docker Scout
 
-## Endpoints Disponibles
+## 4. Estructura del proyecto
+La arquitectura sigue un patrón limpio por capas, aislando rutas, controladores, servicios y persistencia:
 
-**Users**
-- `GET /api/users` - Obtiene todos los usuarios del sistema.
+```text
+backend-adopciones/
+├── src/
+│   ├── app.js                 # App de Express (Aislada para Supertest)
+│   ├── server.js              # Entrypoint real (Levanta el puerto 8080)
+│   ├── config/                # Configuraciones (Swagger)
+│   ├── routes/                # Definición de Endpoints
+│   ├── controllers/           # Manejo de Req/Res
+│   ├── services/              # Lógica de Negocio Central (Lanza errores)
+│   ├── repositories/          # Lógica de Persistencia y Acceso a Datos
+│   ├── middlewares/           # Manejador Global de Errores
+│   └── data/                  # Base de datos Fake en Memoria y Reset de estado
+├── tests/
+│   └── functional/            # Suites de tests funcionales (Supertest)
+├── .dockerignore
+├── .env.example
+├── Dockerfile
+├── jest.config.js
+├── package.json
+└── README.md
+```
 
-**Pets**
-- `GET /api/pets` - Obtiene todas las mascotas del sistema.
+## 5. Entidades principales
+- **Users**: Representan a los adoptantes potenciales.
+- **Pets**: Mascotas disponibles en el sistema con su estado de adopción actual.
+- **Adoptions**: Registro vinculante e inmutable (hasta ser eliminado) que une a un usuario y una mascota mediante sus respectivos IDs.
 
-**Adoptions**
-- `GET /api/adoptions` - Obtiene todas las adopciones registradas.
-- `GET /api/adoptions/:aid` - Obtiene el detalle de una adopción en particular.
-- `POST /api/adoptions/:uid/:pid` - Genera una nueva adopción asociando al usuario (`uid`) y mascota (`pid`).
-- `DELETE /api/adoptions/:aid` - Cancela/elimina una adopción existente y vuelve a dejar a la mascota disponible.
+## 6. Endpoints disponibles
 
-## Stack Usado
-- **Node.js**
-- **Express**
-- **Swagger (swagger-jsdoc, swagger-ui-express)** para documentación OpenAPI.
+### 🔹 Módulo de Usuarios
+- `GET /api/users`: Lista todos los usuarios.
 
-## Instalación de dependencias
+### 🔹 Módulo de Mascotas
+- `GET /api/pets`: Lista todas las mascotas.
 
+### 🔹 Módulo de Adopciones (Router Principal)
+- `GET /api/adoptions`: Lista todas las adopciones históricas.
+- `GET /api/adoptions/:aid`: Obtiene el detalle de una adopción en particular.
+- `POST /api/adoptions/:uid/:pid`: Crea una adopción (vincula un User a un Pet). Valida que la mascota no haya sido adoptada previamente.
+- `DELETE /api/adoptions/:aid`: Cancela una adopción y libera a la mascota para volver a ser adoptada.
+
+## 7. Documentación Swagger/OpenAPI
+El proyecto cuenta con documentación autogenerada y visualmente interactiva donde se pueden probar las peticiones directamente.
+* **URL (Local):** [http://localhost:8080/api/docs](http://localhost:8080/api/docs)
+
+## 8. Instalación local
+
+1. Clonar este repositorio.
+2. Ingresar a la carpeta raíz del proyecto.
+3. Instalar las dependencias de Node.js:
 ```bash
 npm install
 ```
 
-## Ejecución del proyecto
+## 9. Ejecución local
 
+Para iniciar el servidor en modo desarrollo (usando Nodemon):
 ```bash
-# Desarrollo
 npm run dev
-
-# Producción
-npm start
 ```
 
-## Documentación de la API (Swagger)
-Una vez que el servidor esté corriendo, puedes acceder a la documentación interactiva generada con Swagger en la siguiente URL:
+Para iniciar el servidor en modo producción:
+```bash
+npm start
+```
+El servidor escuchará por defecto en el puerto **8080**.
 
-[http://localhost:8080/api/docs](http://localhost:8080/api/docs)
+## 10. Ejecución de tests funcionales
+La suite de pruebas con Jest + Supertest está construida de forma que **no levanta el puerto real** y asegura que cada test inicie con un entorno de datos totalmente limpio.
+```bash
+npm test
+```
+
+## 11. Ejecución de cobertura (Coverage)
+```bash
+npm run test:coverage
+```
+
+### Resultados Destacados (Adoption Router)
+- **Test Suites:** 1 passed, 1 total
+- **Tests:** 12 passed, 12 total
+- **Cobertura destacada:** `adoption.router.js`, `adoption.controller.js` y `adoption.service.js` alcanzan 100% de cobertura en la suite funcional.
+
+## 12. Dockerización
+El proyecto ha sido contenerizado utilizando `node:20-alpine` como imagen base para asegurar el mínimo peso de la imagen final y máxima velocidad de empaquetado. Un archivo `.dockerignore` previene que código basura, módulos locales, entornos virtuales y reportes de cobertura lleguen a la imagen.
+
+## 13. Ejecución con Docker local
+Si deseas construir y probar la imagen en tu máquina sin utilizar Node.js nativo:
+```bash
+# 1. Construir la imagen
+docker build -t backend-adopciones:1.0.0 .
+
+# 2. Levantar el contenedor
+docker run -d --name backend-adopciones-test -p 8080:8080 backend-adopciones:1.0.0
+```
+
+## 14. Imagen en DockerHub
+La imagen oficial compilada está alojada públicamente en el registro de DockerHub para ser utilizada desde cualquier servidor.
+* **URL Pública:** [https://hub.docker.com/r/javs199/backend-adopciones](https://hub.docker.com/r/javs199/backend-adopciones)
+
+**Tags disponibles:**
+- `javs199/backend-adopciones:1.0.0`
+- `javs199/backend-adopciones:latest`
+
+## 15. Ejecución directa desde DockerHub
+Cualquier persona puede ejecutar el proyecto de forma rápida descargando la imagen desde DockerHub:
+```bash
+# 1. Descargar imagen
+docker pull javs199/backend-adopciones:1.0.0
+
+# 2. Ejecutar contenedor
+docker run -d --name backend-adopciones-dockerhub-test -p 8080:8080 javs199/backend-adopciones:1.0.0
+```
+
+## 16. Escaneo básico de seguridad (Docker Scout)
+Como buena práctica, la imagen base ha sido analizada contra vulnerabilidades utilizando `docker scout`.
+```bash
+docker scout quickview javs199/backend-adopciones:1.0.0
+```
+**Resultados del análisis (Imagen base node:20-alpine):**
+- 0 Críticas, 11 Altas, 3 Medias, 2 Bajas.
+- *Nota académica:* Se decidió mantener `node:20-alpine` de forma deliberada por ofrecer la mayor estabilidad LTS compatible con las librerías exigidas en la cursada, evitando así posibles dependencias rotas al subir a Node 26.
+
+## 17. Notas técnicas importantes
+- Los errores globales controlados (ej: `PET_ALREADY_ADOPTED` o `USER_NOT_FOUND`) han sido silenciados del `console.error` nativo de la terminal de pruebas cuando `NODE_ENV === "test"`. Esto mantiene la salida de Jest impecable.
+- Se implementó una base de datos ficticia en memoria (arrays de objetos en `src/data/`), junto con una utilidad de reinicio `resetFakeData()`, lo cual garantiza un ambiente aislado de pruebas E2E y previene la falsificación de positivos por acumulación de estado de memoria.
+
+## 18. Autor
+- **Alumno:** Javs199
+- **Curso:** Full Stack Web Development - Backend III (Coder House)
