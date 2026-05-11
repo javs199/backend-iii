@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
@@ -13,4 +13,6 @@ ENV PORT=8080
 
 EXPOSE 8080
 
-CMD ["npm", "start"]
+USER node
+
+CMD ["node", "src/server.js"]

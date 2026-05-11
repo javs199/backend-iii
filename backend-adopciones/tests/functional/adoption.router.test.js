@@ -23,6 +23,20 @@ describe('Adoption Router Functional Tests', () => {
       expect(response.body.payload.length).toBe(0);
     });
 
+    it('Debe devolver un array con datos después de crear una adopción', async () => {
+      // Crear una adopción
+      await request(app).post('/api/adoptions/u1/p1');
+
+      // Obtener todas las adopciones
+      const response = await request(app).get('/api/adoptions');
+      expect(response.status).toBe(200);
+      expect(response.body.status).toBe('success');
+      expect(Array.isArray(response.body.payload)).toBe(true);
+      expect(response.body.payload.length).toBe(1);
+      expect(response.body.payload[0].userId).toBe('u1');
+      expect(response.body.payload[0].petId).toBe('p1');
+    });
+
     it('Debe responder 500 si ocurre un error interno', async () => {
       jest.spyOn(adoptionService, 'getAllAdoptions').mockImplementation(() => {
         throw new Error('Simulated internal error');

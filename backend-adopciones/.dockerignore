@@ -10,3 +10,9 @@ README.md
 Dockerfile
 .dockerignore
 jest.config.js
+.vscode/
+.idea/
+*.log
+.DS_Store
+.claude/
+ENTREGA_FINAL_BACKEND_III.md

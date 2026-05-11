@@ -9,6 +9,9 @@
     "test": "jest",
     "test:coverage": "jest --coverage"
   },
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "express": "^4.19.2",
     "swagger-jsdoc": "^6.2.8",
